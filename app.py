@@ -5,7 +5,9 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-VERIFY_TOKEN = "vibecode"
+# Set port and verify token
+VERIFY_TOKEN = os.getenv("VERIFY_TOKEN", "Govardhan")
+
 
 @app.route("/", methods=["GET"])
 def verify_webhook():
@@ -17,22 +19,24 @@ def verify_webhook():
         print("WEBHOOK VERIFIED")
         return challenge, 200
 
-    return {
-        "mode": mode,
-        "token": token,
-        "status": "verification failed"
-    }, 403
+    return "", 403
 
 
 @app.route("/", methods=["POST"])
-def webhook():
+def receive_webhook():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    print(f"\nWebhook received {timestamp}\n")
-    print(json.dumps(request.json, indent=2))
+    print(f"\n\nWebhook received {timestamp}\n")
+
+    try:
+        print(json.dumps(request.get_json(), indent=2))
+    except Exception:
+        print(request.data.decode("utf-8"))
 
     return "", 200
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5003)
+    port = int(os.getenv("PORT", 5003))
+    print(f"\nListening on port {port}\n")
+    app.run(host="0.0.0.0", port=port)
