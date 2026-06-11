@@ -17,7 +17,11 @@ def verify_webhook():
         print("WEBHOOK VERIFIED")
         return challenge, 200
 
-    return "", 403
+    return {
+        "mode": mode,
+        "token": token,
+        "status": "verification failed"
+    }, 403
 
 
 @app.route("/", methods=["POST"])
