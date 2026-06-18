@@ -22,20 +22,6 @@ def verify_webhook():
 
     return "", 403
 
-
-@app.route("/", methods=["POST"])
-def receive_webhook():
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    print(f"\n\nWebhook received {timestamp}\n")
-
-    try:
-        print(json.dumps(request.get_json(), indent=2))
-    except Exception:
-        print(request.data.decode("utf-8"))
-
-    return "", 200
-
 @app.route("/", methods=["POST"])
 def receive_webhook():
     try:
