@@ -2,6 +2,7 @@ from flask import Flask, request
 import os
 import json
 from datetime import datetime
+from services.webhook_service import save_webhook
 
 app = Flask(__name__)
 
@@ -35,6 +36,19 @@ def receive_webhook():
 
     return "", 200
 
+@app.route("/", methods=["POST"])
+def receive_webhook():
+    try:
+        payload = request.get_json()
+
+        webhook_id = save_webhook(payload)
+
+        print(f"Webhook saved: {webhook_id}")
+
+    except Exception as e:
+        print(f"Error saving webhook: {e}")
+
+    return "", 200
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5003))
