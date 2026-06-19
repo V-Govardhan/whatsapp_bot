@@ -24,15 +24,39 @@ def verify_webhook():
 
 @app.route("/", methods=["POST"])
 def receive_webhook():
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    print("\n====================================")
+    print(f"Webhook received at {timestamp}")
+    print("====================================")
+
     try:
+        # Get incoming webhook payload
         payload = request.get_json()
 
+        # Print received webhook
+        print("\nIncoming Webhook Payload:")
+        print(json.dumps(payload, indent=2))
+
+        # Save webhook
         webhook_id = save_webhook(payload)
 
-        print(f"Webhook saved: {webhook_id}")
+        # Print saved confirmation
+        print("\nWebhook saved successfully")
+        print(f"Webhook ID: {webhook_id}")
 
     except Exception as e:
-        print(f"Error saving webhook: {e}")
+        print("\nWebhook processing failed")
+        print(f"Error: {e}")
+
+        # fallback raw data logging
+        try:
+            print("\nRaw Payload:")
+            print(request.data.decode("utf-8"))
+        except:
+            pass
+
+    print("====================================\n")
 
     return "", 200
 
