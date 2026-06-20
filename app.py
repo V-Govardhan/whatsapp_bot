@@ -8,7 +8,6 @@ import json
 
 app = Flask(__name__)
 
-# Set port and verify token
 VERIFY_TOKEN = os.getenv("VERIFY_TOKEN", "Govardhan")
 
 
@@ -33,23 +32,16 @@ def receive_webhook():
     )
 
     try:
-        # Get incoming webhook payload
         payload = request.get_json()
 
-        # Print received webhook
         logger.info(f"Incoming Webhook Payload: {json.dumps(payload, indent=2)}")
-        # print(json.dumps(payload, indent=2))
 
-        # Save webhook
         webhook_id = save_webhook(payload)
 
-        # Print saved confirmation
         logger.info(f"Webhook saved successfully | ID: {webhook_id}")
-        # print(f"Webhook ID: {webhook_id}")
 
     except Exception as e:
         logger.error(f"Webhook processing failed | Error: {e}")
-        # fallback raw data logging
         try:
             logger.info(f"Raw Payload: {request.data.decode('utf-8')}")
         except:
