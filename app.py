@@ -3,6 +3,8 @@ import os
 import json
 from datetime import datetime
 from services.webhook_service import save_webhook
+from utils.logger import logger
+import json
 
 app = Flask(__name__)
 
@@ -26,38 +28,34 @@ def verify_webhook():
 def receive_webhook():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    print("\n====================================")
-    print(f"Webhook received at {timestamp}")
-    print("====================================")
+    logger.info(
+    f"Webhook received | timestamp={timestamp}"
+    )
 
     try:
         # Get incoming webhook payload
         payload = request.get_json()
 
         # Print received webhook
-        print("\nIncoming Webhook Payload:")
-        print(json.dumps(payload, indent=2))
+        logger.info(f"Incoming Webhook Payload: {json.dumps(payload, indent=2)}")
+        # print(json.dumps(payload, indent=2))
 
         # Save webhook
         webhook_id = save_webhook(payload)
 
         # Print saved confirmation
-        print("\nWebhook saved successfully")
-        print(f"Webhook ID: {webhook_id}")
+        logger.info(f"Webhook saved successfully | ID: {webhook_id}")
+        # print(f"Webhook ID: {webhook_id}")
 
     except Exception as e:
-        print("\nWebhook processing failed")
-        print(f"Error: {e}")
-
+        logger.error(f"Webhook processing failed | Error: {e}")
         # fallback raw data logging
         try:
-            print("\nRaw Payload:")
-            print(request.data.decode("utf-8"))
+            logger.info(f"Raw Payload: {request.data.decode('utf-8')}")
         except:
             pass
 
-    print("====================================\n")
-
+    logger.info("====================================")
     return "", 200
 
 if __name__ == "__main__":
